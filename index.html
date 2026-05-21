@@ -1,48 +1,457 @@
-<!doctype html>
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=375, initial-scale=1, user-scalable=no">
+<meta name="theme-color" content="#FFFFFF">
+<title>Подарок акции — АльфаИнвестиции [v=d f=1]</title>
+<style>
+  :root {
+    --color-primary: #EF3124;
+    --color-primary-pressed: #D62A1F;
+    --color-bg: #F2F3F5;
+    --color-surface: #FFFFFF;
+    --color-text-primary: rgba(3,3,6,0.88);
+    --color-text-secondary: rgba(3,3,6,0.60);
+    --color-text-tertiary: rgba(3,3,6,0.40);
+    --color-divider: rgba(3,3,6,0.06);
+    --border-radius: 12px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    -webkit-user-select: none; user-select: none;
+    line-height: 1.4; font-size: 15px;
+  }
+  input, textarea { -webkit-user-select: text; user-select: text; }
+  button { font-family: inherit; cursor: pointer; }
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Предложение от банка</title>
+  .appbar {
+    height: 56px; padding-top: var(--safe-top);
+    background: var(--color-surface);
+    display: flex; align-items: center;
+    padding-left: 8px; padding-right: 16px;
+    position: sticky; top: 0; z-index: 10;
+    box-shadow: 0 1px 0 var(--color-divider);
+  }
+  .appbar__back {
+    width: 44px; height: 44px; border: none; background: none;
+    font-size: 22px; color: var(--color-text-primary); line-height: 1;
+    display: none; align-items: center; justify-content: center;
+  }
+  .appbar__title { flex: 1; text-align: center; font-size: 17px; font-weight: 600; margin: 0; }
 
-  <!-- Google Tag Manager -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-98GT8FHBZK"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+  .screen { display: none; flex-direction: column; min-height: calc(100dvh - 56px - var(--safe-top)); }
+  .screen.active { display: flex; }
 
-    gtag('config', 'G-98GT8FHBZK');
-  </script>
-  <script type="text/javascript">
-    (function (m, e, t, r, i, k, a) {
-      m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
-      m[i].l = 1 * new Date();
-      for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
-      k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
-    })
-      (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+  .hero { padding: 24px 16px 32px; background: var(--color-surface); text-align: center; }
+  .hero__illustration { width: 180px; height: 180px; margin: 0 auto 24px; }
+  .hero__headline { font-size: 26px; font-weight: 700; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.5px; }
+  .hero__subheadline { font-size: 16px; color: var(--color-text-secondary); margin: 0; line-height: 1.4; }
 
-    ym(96171108, "init", {
-      clickmap: true,
-      trackLinks: true,
-      accurateTrackBounce: true,
-      webvisor: true,
-      ecommerce: "dataLayer"
-    });
-  </script>
+  .section { padding: 24px 16px; background: var(--color-surface); margin-top: 8px; }
+  .section__title { font-size: 18px; font-weight: 600; margin: 0 0 16px; }
 
-  <!-- End Google Tag Manager -->
+  .how__steps { list-style: none; padding: 0; margin: 0; }
+  .how__step { display: flex; align-items: flex-start; padding: 8px 0; font-size: 15px; line-height: 1.4; }
+  .how__step-num {
+    width: 24px; height: 24px; flex-shrink: 0;
+    background: var(--color-primary); color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; margin-right: 12px; margin-top: 1px;
+  }
+
+  .steps-bar {
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 16px 16px 8px; background: var(--color-surface); margin-top: 8px;
+  }
+  .step-item { display: flex; flex-direction: column; align-items: center; }
+  .step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #DEE1E5; color: var(--color-text-tertiary);
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 200ms, color 200ms;
+  }
+  .step-item.is-active .step-dot { background: var(--color-primary); color: white; }
+  .step-item.is-done .step-dot { background: var(--color-primary); color: white; }
+  .step-label { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; white-space: nowrap; }
+  .step-item.is-active .step-label { color: var(--color-primary); font-weight: 600; }
+  .step-connector {
+    width: 36px; height: 2px; background: #DEE1E5;
+    margin: 13px 4px 0; flex-shrink: 0; transition: background 200ms;
+  }
+  .step-connector.is-done { background: var(--color-primary); }
+
+  .amount-display {
+    font-size: 48px; font-weight: 700; text-align: center;
+    color: var(--color-text-primary); letter-spacing: -1px;
+    margin: 8px 0 24px; min-height: 58px; transition: color 150ms;
+  }
+  .amount-display.has-value { color: var(--color-primary); }
+  .amount-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .amount-chip {
+    flex: 1 1 calc(25% - 6px); min-width: 72px;
+    padding: 10px 8px; border: 1.5px solid var(--color-divider);
+    border-radius: 10px; background: var(--color-bg);
+    font-size: 14px; font-weight: 500; color: var(--color-text-primary);
+    transition: border-color 120ms, background 120ms, color 120ms; text-align: center;
+  }
+  .amount-chip.selected {
+    border-color: var(--color-primary); background: #FEF0EF;
+    color: var(--color-primary); font-weight: 600;
+  }
+  .amount-input-wrap { position: relative; display: flex; align-items: center; }
+  .amount-input {
+    width: 100%; padding: 12px 40px 12px 12px;
+    border: 1.5px solid var(--color-divider); border-radius: var(--border-radius);
+    font-size: 18px; font-family: inherit; background: var(--color-bg);
+    color: var(--color-text-primary); -webkit-appearance: none; appearance: none;
+  }
+  .amount-input:focus { outline: none; border-color: var(--color-primary); }
+  .amount-input-suffix {
+    position: absolute; right: 14px;
+    font-size: 18px; font-weight: 500; color: var(--color-text-secondary);
+    pointer-events: none;
+  }
+  .form__label { display: block; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .form__hint { font-size: 12px; color: var(--color-text-tertiary); margin: 10px 0 0; }
+
+  .spacer { flex: 1; }
+
+  .cta-block {
+    padding: 16px 16px calc(16px + var(--safe-bottom));
+    background: var(--color-surface); box-shadow: 0 -1px 0 var(--color-divider);
+  }
+  .cta {
+    width: 100%; min-height: 48px; padding: 12px 24px;
+    background: var(--color-primary); color: white;
+    border: none; border-radius: var(--border-radius);
+    font-size: 16px; font-weight: 600; transition: opacity 150ms;
+  }
+  .cta:active { background: var(--color-primary-pressed); }
+  .cta:disabled { opacity: 0.4; cursor: default; }
+
+  .fakedoor-screen {
+    position: fixed; inset: 0; background: var(--color-surface);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 24px calc(32px + var(--safe-bottom));
+    padding-top: calc(32px + var(--safe-top));
+    text-align: center; z-index: 100;
+  }
+  .fakedoor-screen.active { display: flex; }
+  .fakedoor__icon {
+    width: 88px; height: 88px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; line-height: 1; margin-bottom: 24px;
+  }
+  .fakedoor__icon--error { background: #FEF0EF; }
+  .fakedoor__icon--info  { background: #EEF4FF; }
+  .fakedoor__title { font-size: 24px; font-weight: 700; margin: 0 0 16px; line-height: 1.2; }
+  .fakedoor__text {
+    font-size: 15px; color: var(--color-text-secondary);
+    max-width: 310px; line-height: 1.55; margin: 0 0 10px;
+  }
+  .fakedoor__text--strong { color: var(--color-text-primary); font-weight: 500; }
+  .fakedoor__actions { width: 100%; max-width: 320px; margin-top: 32px; }
+  .fakedoor__btn {
+    width: 100%; padding: 12px 24px; min-height: 48px;
+    background: var(--color-primary); color: white;
+    border: none; border-radius: var(--border-radius);
+    font-size: 16px; font-weight: 600;
+  }
+
+  .disclaimer-min {
+    padding: 12px 16px; font-size: 11px;
+    color: var(--color-text-tertiary); line-height: 1.4;
+    background: var(--color-bg); text-align: center;
+  }
+</style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-98GT8FHBZK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-98GT8FHBZK', { send_page_view: false });
+</script>
+
+<script type="text/javascript">
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();
+  for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+  ym(96171108,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,ecommerce:'dataLayer'});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/96171108" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
 </head>
+<body data-experiment="E-001">
 
-<body>
-  <noscript>
-    <div><img src="https://mc.yandex.ru/watch/96171108" style="position:absolute; left:-9999px;" alt="" /></div>
-  </noscript>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+<header class="appbar" id="appbar">
+  <button class="appbar__back" id="btn-back" aria-label="Назад">&#x2039;</button>
+  <h1 class="appbar__title">Подарок акции</h1>
+</header>
+
+<div id="screen-intro" class="screen active">
+  <section class="hero" id="hero"></section>
+  <section class="section">
+    <h2 class="section__title">Как это работает</h2>
+    <ol class="how__steps">
+      <li class="how__step"><span class="how__step-num">1</span>Укажите сумму — сколько хотите вложить в подарок</li>
+      <li class="how__step"><span class="how__step-num">2</span>Выберите акции, облигации или фонды — мы купим их в подарок</li>
+      <li class="how__step"><span class="how__step-num">3</span>Получатель получит SMS, актив зачислится на его брокерский счёт</li>
+    </ol>
+  </section>
+  <div class="spacer"></div>
+  <p class="disclaimer-min">Стоимость инструментов зависит от биржевых котировок. Расчёт и порядок дарения могут отличаться от показанных условий.</p>
+  <div class="cta-block">
+    <button class="cta" id="cta-start">Подарить акцию</button>
+  </div>
+</div>
+
+<div id="screen-step1" class="screen">
+  <div class="steps-bar">
+    <div class="step-item is-active">
+      <div class="step-dot">1</div>
+      <div class="step-label">Сумма</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-dot">2</div>
+      <div class="step-label">Активы</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-dot">3</div>
+      <div class="step-label">Получатель</div>
+    </div>
+  </div>
+  <section class="section" style="flex:1;">
+    <h2 class="section__title">Сколько хотите подарить?</h2>
+    <div class="amount-display" id="amount-display">&#x2014;</div>
+    <div class="amount-presets" id="amount-presets">
+      <button class="amount-chip" data-amount="500">500 &#8381;</button>
+      <button class="amount-chip" data-amount="1000">1 000 &#8381;</button>
+      <button class="amount-chip" data-amount="3000">3 000 &#8381;</button>
+      <button class="amount-chip" data-amount="5000">5 000 &#8381;</button>
+    </div>
+    <div class="form__field" style="margin-top:4px;">
+      <label class="form__label" for="amount-input">Другая сумма</label>
+      <div class="amount-input-wrap">
+        <input type="number" id="amount-input" class="amount-input"
+               placeholder="0" min="100" max="1000000" inputmode="numeric">
+        <span class="amount-input-suffix">&#8381;</span>
+      </div>
+      <p class="form__hint" id="amount-hint">Минимальная сумма — 100 &#8381;</p>
+    </div>
+  </section>
+  <div class="cta-block">
+    <button class="cta" id="cta-step1" disabled>Выбрать активы</button>
+  </div>
+</div>
+
+<div id="screen-fakedoor" class="fakedoor-screen" role="dialog" aria-modal="true"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  var smysl = 'd';
+  var forma = '1';
+  var userHash = '';
+
+  document.body.setAttribute('data-smysl', smysl);
+  document.body.setAttribute('data-forma', forma);
+  document.body.setAttribute('data-user', userHash);
+
+  var MAX_AMOUNT = 1000000;
+  var MIN_AMOUNT = 100;
+
+  function track(event, props) {
+    props = props || {};
+    props.smysl = smysl; props.forma = forma;
+    props.user_id_hash = userHash;
+    props.experiment = 'E-001';
+    props.timestamp = new Date().toISOString();
+    if (window.console && console.log) console.log('[track]', event, props);
+    if (typeof gtag === 'function') { try { gtag('event', event, props); } catch(e) {} }
+    if (typeof ym  === 'function') { try { ym(96171108, 'reachGoal', event, props); } catch(e) {} }
+  }
+
+  var heroContent = {
+    b: { headline: 'Подарите долю в компании',
+          subheadline: 'Необычный подарок к празднику — акции, облигации или фонды вместо денежного конверта',
+          illustration: 'gift' },
+    c: { headline: 'Подарите первый шаг к инвестициям',
+          subheadline: 'Лучший подарок — это знание. Подарите близким их первую акцию, облигацию или пай',
+          illustration: 'edu' },
+    d: { headline: 'Подарок, который может вырасти',
+          subheadline: 'Деньги тратятся, акции остаются. Подарите часть компании, а не конверт',
+          illustration: 'grow' }
+  };
+  var svgIllustrations = {
+    gift: '<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" width="180" height="180" aria-hidden="true"><rect x="30" y="70" width="120" height="80" rx="8" fill="#EF3124"/><rect x="84" y="60" width="12" height="100" fill="#FFFFFF"/><rect x="30" y="100" width="120" height="12" fill="#FFFFFF"/><path d="M70 60 Q90 30 90 60 Q90 30 110 60 L110 70 L70 70 Z" fill="#EF3124" stroke="#FFFFFF" stroke-width="2"/><circle cx="40" cy="40" r="4" fill="#EF3124" opacity="0.5"/><circle cx="140" cy="50" r="3" fill="#EF3124" opacity="0.5"/></svg>',
+    edu:  '<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" width="180" height="180" aria-hidden="true"><rect x="30" y="80" width="120" height="70" rx="6" fill="#EF3124"/><path d="M30 80 L90 50 L150 80 L90 110 Z" fill="#FFFFFF" stroke="#EF3124" stroke-width="2"/><rect x="85" y="105" width="10" height="40" fill="#FFFFFF"/><rect x="60" y="125" width="60" height="6" fill="#FFFFFF" opacity="0.8"/></svg>',
+    grow: '<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" width="180" height="180" aria-hidden="true"><rect x="40" y="120" width="20" height="30" fill="#EF3124" opacity="0.4"/><rect x="70" y="90" width="20" height="60" fill="#EF3124" opacity="0.6"/><rect x="100" y="60" width="20" height="90" fill="#EF3124" opacity="0.8"/><rect x="130" y="40" width="20" height="110" fill="#EF3124"/><path d="M30 140 L60 110 L90 80 L120 50 L150 30" stroke="#EF3124" stroke-width="3" fill="none" stroke-linecap="round"/><polygon points="150,30 142,40 152,38" fill="#EF3124"/></svg>'
+  };
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function renderHero() {
+    var hc = heroContent[smysl] || heroContent.b;
+    document.getElementById('hero').innerHTML =
+      '<div class="hero__illustration">' + (svgIllustrations[hc.illustration] || svgIllustrations.gift) + '</div>' +
+      '<h1 class="hero__headline">' + escapeHtml(hc.headline) + '</h1>' +
+      '<p class="hero__subheadline">' + escapeHtml(hc.subheadline) + '</p>';
+  }
+
+  var fakedoorOpenTime = 0;
+  function renderFakeDoor() {
+    var fd = document.getElementById('screen-fakedoor');
+    if (forma === '1') {
+      fd.innerHTML =
+        '<div class="fakedoor__icon fakedoor__icon--error" aria-hidden="true">&#x26A0;&#xFE0F;</div>' +
+        '<h2 class="fakedoor__title">Функция пока недоступна</h2>' +
+        '<p class="fakedoor__text fakedoor__text--strong">Деньги не списывались — это была проверка интереса к сервису.</p>' +
+        '<p class="fakedoor__text">Мы видим, что функция нужна, и работаем над ней. Уведомим вас, когда подарок акциями можно будет отправить по-настоящему.</p>' +
+        '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Хорошо</button></div>';
+    } else {
+      fd.innerHTML =
+        '<div class="fakedoor__icon fakedoor__icon--info" aria-hidden="true">&#x1F4CB;</div>' +
+        '<h2 class="fakedoor__title">Спасибо за участие!</h2>' +
+        '<p class="fakedoor__text fakedoor__text--strong">Вы помогаете нам создать функцию подарка акций. Деньги не списывались.</p>' +
+        '<p class="fakedoor__text">Это исследование интереса: мы проверяем, насколько такая функция нужна клиентам. Пришлём пуш, когда всё будет готово.</p>' +
+        '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Понял, жду</button></div>';
+    }
+    document.getElementById('btn-fakedoor-close').addEventListener('click', function() {
+      track('e001_landing_closed_after_fakedoor', {
+        time_in_fakedoor_sec: Math.round((Date.now() - fakedoorOpenTime) / 1000),
+        selected_amount: selectedAmount
+      });
+      closeLanding();
+    });
+  }
+
+  var step1OpenTime = 0;
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    var el = document.getElementById(id);
+    if (el) el.classList.add('active');
+    var btnBack = document.getElementById('btn-back');
+    btnBack.style.display = (id === 'screen-step1') ? 'flex' : 'none';
+  }
+
+  function openFakeDoor() {
+    document.getElementById('screen-fakedoor').classList.add('active');
+    fakedoorOpenTime = Date.now();
+    track('e001_fakedoor_shown', {
+      selected_amount: selectedAmount,
+      forma_type: forma === '1' ? 'error' : 'research'
+    });
+  }
+
+  var selectedAmount = 0;
+
+  function formatAmount(n) {
+    return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+  }
+
+  function updateAmountDisplay(val) {
+    var display = document.getElementById('amount-display');
+    var hint = document.getElementById('amount-hint');
+    if (val >= MIN_AMOUNT && val <= MAX_AMOUNT) {
+      display.textContent = formatAmount(val) + '\u00a0\u20bd';
+      display.classList.add('has-value');
+      hint.textContent = '\u0414\u043e 1\u00a0000\u00a0000 \u20bd';
+      hint.style.color = '';
+      document.getElementById('cta-step1').disabled = false;
+    } else if (val > MAX_AMOUNT) {
+      display.textContent = formatAmount(MAX_AMOUNT) + '\u00a0\u20bd';
+      display.classList.add('has-value');
+      hint.textContent = '\u041c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u0430\u044f \u0441\u0443\u043c\u043c\u0430 — 1\u00a0000\u00a0000 \u20bd';
+      hint.style.color = 'var(--color-primary)';
+      document.getElementById('cta-step1').disabled = false;
+    } else {
+      display.textContent = '\u2014';
+      display.classList.remove('has-value');
+      hint.textContent = '\u041c\u0438\u043d\u0438\u043c\u0430\u043b\u044c\u043d\u0430\u044f \u0441\u0443\u043c\u043c\u0430 — 100 \u20bd';
+      hint.style.color = '';
+      document.getElementById('cta-step1').disabled = true;
+    }
+  }
+
+  function selectPreset(amount) {
+    selectedAmount = amount;
+    document.querySelectorAll('.amount-chip').forEach(function(c) {
+      c.classList.toggle('selected', parseInt(c.getAttribute('data-amount')) === amount);
+    });
+    document.getElementById('amount-input').value = '';
+    updateAmountDisplay(amount);
+    track('e001_amount_preset_selected', { amount: amount });
+  }
+
+  document.getElementById('amount-presets').addEventListener('click', function(e) {
+    var chip = e.target.closest('.amount-chip');
+    if (!chip) return;
+    selectPreset(parseInt(chip.getAttribute('data-amount')));
+  });
+
+  document.getElementById('amount-input').addEventListener('input', function() {
+    var raw = parseInt(this.value) || 0;
+    if (raw > MAX_AMOUNT) {
+      raw = MAX_AMOUNT;
+      this.value = MAX_AMOUNT;
+    }
+    selectedAmount = raw;
+    document.querySelectorAll('.amount-chip').forEach(function(c) { c.classList.remove('selected'); });
+    updateAmountDisplay(raw);
+  });
+
+  document.getElementById('cta-start').addEventListener('click', function() {
+    track('e001_intro_cta_clicked', { smysl: smysl });
+    showScreen('screen-step1');
+    step1OpenTime = Date.now();
+    track('e001_step1_shown', {});
+  });
+
+  document.getElementById('cta-step1').addEventListener('click', function() {
+    var amount = selectedAmount > MAX_AMOUNT ? MAX_AMOUNT : selectedAmount;
+    if (amount < MIN_AMOUNT) return;
+    track('e001_gift_buy_clicked', {
+      selected_amount: amount,
+      time_to_click_sec: Math.round((Date.now() - step1OpenTime) / 1000)
+    });
+    openFakeDoor();
+  });
+
+  function closeLanding() {
+    if (window.AlfaBridge && typeof window.AlfaBridge.closeWebView === 'function') {
+      window.AlfaBridge.closeWebView();
+    } else {
+      try { window.history.back(); } catch(e) {}
+    }
+  }
+
+  document.getElementById('btn-back').addEventListener('click', function() {
+    track('e001_step1_back', { selected_amount: selectedAmount });
+    showScreen('screen-intro');
+  });
+
+  renderHero();
+  renderFakeDoor();
+
+  track('e001_landing_opened', {
+    source_widget: smysl,
+    invalid_assignment: false
+  });
+})();
+</script>
 </body>
-
 </html>
