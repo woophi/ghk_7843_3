@@ -536,6 +536,13 @@
       'use strict';
 
       var variant = 'var3';
+      var smysl = 'd';
+      var forma = '1';
+      var userHash = '';
+
+      document.body.setAttribute('data-smysl', smysl);
+      document.body.setAttribute('data-forma', forma);
+      document.body.setAttribute('data-user', userHash);
 
       var MAX_AMOUNT = 1000000;
       var MIN_AMOUNT = 100;
@@ -548,9 +555,21 @@
       }
 
       var heroContent = {
-        headline: 'Подарок, который может вырасти',
-        subheadline: 'Деньги тратятся, акции остаются. Подарите часть компании, а не конверт',
-        illustration: 'grow'
+        b: {
+          headline: 'Подарите долю в компании',
+          subheadline: 'Необычный подарок к празднику — акции, облигации или фонды вместо денежного конверта',
+          illustration: 'gift'
+        },
+        c: {
+          headline: 'Подарите первый шаг к инвестициям',
+          subheadline: 'Лучший подарок — это знание. Подарите близким их первую акцию, облигацию или пай',
+          illustration: 'edu'
+        },
+        d: {
+          headline: 'Подарок, который может вырасти',
+          subheadline: 'Деньги тратятся, акции остаются. Подарите часть компании, а не конверт',
+          illustration: 'grow'
+        }
       };
       var svgIllustrations = {
         gift: '<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" width="180" height="180" aria-hidden="true"><rect x="30" y="70" width="120" height="80" rx="8" fill="#EF3124"/><rect x="84" y="60" width="12" height="100" fill="#FFFFFF"/><rect x="30" y="100" width="120" height="12" fill="#FFFFFF"/><path d="M70 60 Q90 30 90 60 Q90 30 110 60 L110 70 L70 70 Z" fill="#EF3124" stroke="#FFFFFF" stroke-width="2"/><circle cx="40" cy="40" r="4" fill="#EF3124" opacity="0.5"/><circle cx="140" cy="50" r="3" fill="#EF3124" opacity="0.5"/></svg>',
@@ -561,22 +580,32 @@
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
       function renderHero() {
+        var hc = heroContent[smysl] || heroContent.b;
         document.getElementById('hero').innerHTML =
-          '<div class="hero__illustration">' + (svgIllustrations[heroContent.illustration] || svgIllustrations.gift) + '</div>' +
-          '<h1 class="hero__headline">' + escapeHtml(heroContent.headline) + '</h1>' +
-          '<p class="hero__subheadline">' + escapeHtml(heroContent.subheadline) + '</p>';
+          '<div class="hero__illustration">' + (svgIllustrations[hc.illustration] || svgIllustrations.gift) + '</div>' +
+          '<h1 class="hero__headline">' + escapeHtml(hc.headline) + '</h1>' +
+          '<p class="hero__subheadline">' + escapeHtml(hc.subheadline) + '</p>';
       }
 
       function renderFakeDoor() {
         var fd = document.getElementById('screen-fakedoor');
-        fd.innerHTML =
-          '<div class="fakedoor__icon fakedoor__icon--info" aria-hidden="true">&#x1F389;</div>' +
-          '<h2 class="fakedoor__title">Спасибо!</h2>' +
-          '<p class="fakedoor__text fakedoor__text--strong">Мы сохранили ваш выбор.</p>' +
-          '<p class="fakedoor__text">Продолжение сценария находится вне этого прототипа.</p>' +
-          '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Закрыть</button></div>';
+        if (forma === '1') {
+          fd.innerHTML =
+            '<div class="fakedoor__icon fakedoor__icon--error" aria-hidden="true">&#x26A0;&#xFE0F;</div>' +
+            '<h2 class="fakedoor__title">Функция пока недоступна</h2>' +
+            '<p class="fakedoor__text fakedoor__text--strong">Деньги не списывались — это была проверка интереса к сервису.</p>' +
+            '<p class="fakedoor__text">Мы видим, что функция нужна, и работаем над ней. Уведомим вас, когда подарок акциями можно будет отправить по-настоящему.</p>' +
+            '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Хорошо</button></div>';
+        } else {
+          fd.innerHTML =
+            '<div class="fakedoor__icon fakedoor__icon--info" aria-hidden="true">&#x1F4CB;</div>' +
+            '<h2 class="fakedoor__title">Спасибо за участие!</h2>' +
+            '<p class="fakedoor__text fakedoor__text--strong">Вы помогаете нам создать функцию подарка акций. Деньги не списывались.</p>' +
+            '<p class="fakedoor__text">Это исследование интереса: мы проверяем, насколько такая функция нужна клиентам. Пришлём пуш, когда всё будет готово.</p>' +
+            '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Понял, жду</button></div>';
+        }
         document.getElementById('btn-fakedoor-close').addEventListener('click', function () {
-          closeLanding();
+          window.location.replace('alfabank://');
         });
       }
 
