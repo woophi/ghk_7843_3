@@ -535,44 +535,22 @@
     (function () {
       'use strict';
 
-      var smysl = 'd';
-      var forma = '1';
-      var userHash = '';
-
-      document.body.setAttribute('data-smysl', smysl);
-      document.body.setAttribute('data-forma', forma);
-      document.body.setAttribute('data-user', userHash);
+      var variant = 'var3';
 
       var MAX_AMOUNT = 1000000;
       var MIN_AMOUNT = 100;
 
       function track(event, props) {
-        props = props || {};
-        props.smysl = smysl; props.forma = forma;
-        props.user_id_hash = userHash;
-        props.experiment = 'E-001';
-        props.timestamp = new Date().toISOString();
+        props = Object.assign({ var: variant }, props || {});
         if (window.console && console.log) console.log('[track]', event, props);
         if (typeof gtag === 'function') { try { gtag('event', event, props); } catch (e) { } }
         if (typeof ym === 'function') { try { ym(96171108, 'reachGoal', event, props); } catch (e) { } }
       }
 
       var heroContent = {
-        b: {
-          headline: 'Подарите долю в компании',
-          subheadline: 'Необычный подарок к празднику — акции, облигации или фонды вместо денежного конверта',
-          illustration: 'gift'
-        },
-        c: {
-          headline: 'Подарите первый шаг к инвестициям',
-          subheadline: 'Лучший подарок — это знание. Подарите близким их первую акцию, облигацию или пай',
-          illustration: 'edu'
-        },
-        d: {
-          headline: 'Подарок, который может вырасти',
-          subheadline: 'Деньги тратятся, акции остаются. Подарите часть компании, а не конверт',
-          illustration: 'grow'
-        }
+        headline: 'Подарок, который может вырасти',
+        subheadline: 'Деньги тратятся, акции остаются. Подарите часть компании, а не конверт',
+        illustration: 'grow'
       };
       var svgIllustrations = {
         gift: '<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg" width="180" height="180" aria-hidden="true"><rect x="30" y="70" width="120" height="80" rx="8" fill="#EF3124"/><rect x="84" y="60" width="12" height="100" fill="#FFFFFF"/><rect x="30" y="100" width="120" height="12" fill="#FFFFFF"/><path d="M70 60 Q90 30 90 60 Q90 30 110 60 L110 70 L70 70 Z" fill="#EF3124" stroke="#FFFFFF" stroke-width="2"/><circle cx="40" cy="40" r="4" fill="#EF3124" opacity="0.5"/><circle cx="140" cy="50" r="3" fill="#EF3124" opacity="0.5"/></svg>',
@@ -583,57 +561,42 @@
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
       function renderHero() {
-        var hc = heroContent[smysl] || heroContent.b;
         document.getElementById('hero').innerHTML =
-          '<div class="hero__illustration">' + (svgIllustrations[hc.illustration] || svgIllustrations.gift) + '</div>' +
-          '<h1 class="hero__headline">' + escapeHtml(hc.headline) + '</h1>' +
-          '<p class="hero__subheadline">' + escapeHtml(hc.subheadline) + '</p>';
+          '<div class="hero__illustration">' + (svgIllustrations[heroContent.illustration] || svgIllustrations.gift) + '</div>' +
+          '<h1 class="hero__headline">' + escapeHtml(heroContent.headline) + '</h1>' +
+          '<p class="hero__subheadline">' + escapeHtml(heroContent.subheadline) + '</p>';
       }
 
-      var fakedoorOpenTime = 0;
       function renderFakeDoor() {
         var fd = document.getElementById('screen-fakedoor');
-        if (forma === '1') {
-          fd.innerHTML =
-            '<div class="fakedoor__icon fakedoor__icon--error" aria-hidden="true">&#x26A0;&#xFE0F;</div>' +
-            '<h2 class="fakedoor__title">Функция пока недоступна</h2>' +
-            '<p class="fakedoor__text fakedoor__text--strong">Деньги не списывались — это была проверка интереса к сервису.</p>' +
-            '<p class="fakedoor__text">Мы видим, что функция нужна, и работаем над ней. Уведомим вас, когда подарок акциями можно будет отправить по-настоящему.</p>' +
-            '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Хорошо</button></div>';
-        } else {
-          fd.innerHTML =
-            '<div class="fakedoor__icon fakedoor__icon--info" aria-hidden="true">&#x1F4CB;</div>' +
-            '<h2 class="fakedoor__title">Спасибо за участие!</h2>' +
-            '<p class="fakedoor__text fakedoor__text--strong">Вы помогаете нам создать функцию подарка акций. Деньги не списывались.</p>' +
-            '<p class="fakedoor__text">Это исследование интереса: мы проверяем, насколько такая функция нужна клиентам. Пришлём пуш, когда всё будет готово.</p>' +
-            '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Понял, жду</button></div>';
-        }
+        fd.innerHTML =
+          '<div class="fakedoor__icon fakedoor__icon--info" aria-hidden="true">&#x1F389;</div>' +
+          '<h2 class="fakedoor__title">Спасибо!</h2>' +
+          '<p class="fakedoor__text fakedoor__text--strong">Мы сохранили ваш выбор.</p>' +
+          '<p class="fakedoor__text">Продолжение сценария находится вне этого прототипа.</p>' +
+          '<div class="fakedoor__actions"><button class="fakedoor__btn" id="btn-fakedoor-close">Закрыть</button></div>';
         document.getElementById('btn-fakedoor-close').addEventListener('click', function () {
-          track('e001_landing_closed_after_fakedoor', {
-            time_in_fakedoor_sec: Math.round((Date.now() - fakedoorOpenTime) / 1000),
-            selected_amount: selectedAmount
-          });
           closeLanding();
         });
       }
 
-      var step1OpenTime = 0;
+      var currentScreen = 'screen-intro';
 
       function showScreen(id) {
         document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
         var el = document.getElementById(id);
         if (el) el.classList.add('active');
+        currentScreen = id;
         var btnBack = document.getElementById('btn-back');
         btnBack.style.display = (id === 'screen-step1') ? 'flex' : 'none';
+
+        if (id === 'screen-step1') {
+          track('7843_landing_impression_step2');
+        }
       }
 
       function openFakeDoor() {
         document.getElementById('screen-fakedoor').classList.add('active');
-        fakedoorOpenTime = Date.now();
-        track('e001_fakedoor_shown', {
-          selected_amount: selectedAmount,
-          forma_type: forma === '1' ? 'error' : 'research'
-        });
       }
 
       var selectedAmount = 0;
@@ -648,19 +611,19 @@
         if (val >= MIN_AMOUNT && val <= MAX_AMOUNT) {
           display.textContent = formatAmount(val) + '\u00a0\u20bd';
           display.classList.add('has-value');
-          hint.textContent = '\u0414\u043e 1\u00a0000\u00a0000 \u20bd';
+          hint.textContent = 'До 1\u00a0000\u00a0000 \u20bd';
           hint.style.color = '';
           document.getElementById('cta-step1').disabled = false;
         } else if (val > MAX_AMOUNT) {
           display.textContent = formatAmount(MAX_AMOUNT) + '\u00a0\u20bd';
           display.classList.add('has-value');
-          hint.textContent = '\u041c\u0430\u043a\u0441\u0438\u043c\u0430\u043b\u044c\u043d\u0430\u044f \u0441\u0443\u043c\u043c\u0430 — 1\u00a0000\u00a0000 \u20bd';
+          hint.textContent = 'Максимальная сумма — 1\u00a0000\u00a0000 \u20bd';
           hint.style.color = 'var(--color-primary)';
           document.getElementById('cta-step1').disabled = false;
         } else {
           display.textContent = '\u2014';
           display.classList.remove('has-value');
-          hint.textContent = '\u041c\u0438\u043d\u0438\u043c\u0430\u043b\u044c\u043d\u0430\u044f \u0441\u0443\u043c\u043c\u0430 — 100 \u20bd';
+          hint.textContent = 'Минимальная сумма — 100 \u20bd';
           hint.style.color = '';
           document.getElementById('cta-step1').disabled = true;
         }
@@ -673,7 +636,7 @@
         });
         document.getElementById('amount-input').value = '';
         updateAmountDisplay(amount);
-        track('e001_amount_preset_selected', { amount: amount });
+        track('7843_sum_click', { dimension_1: String(amount) });
       }
 
       document.getElementById('amount-presets').addEventListener('click', function (e) {
@@ -694,19 +657,14 @@
       });
 
       document.getElementById('cta-start').addEventListener('click', function () {
-        track('e001_intro_cta_clicked', { smysl: smysl });
+        track('7843_send_click_step1');
         showScreen('screen-step1');
-        step1OpenTime = Date.now();
-        track('e001_step1_shown', {});
       });
 
       document.getElementById('cta-step1').addEventListener('click', function () {
         var amount = selectedAmount > MAX_AMOUNT ? MAX_AMOUNT : selectedAmount;
         if (amount < MIN_AMOUNT) return;
-        track('e001_gift_buy_clicked', {
-          selected_amount: amount,
-          time_to_click_sec: Math.round((Date.now() - step1OpenTime) / 1000)
-        });
+        track('7843_send_click_step2_var123', { dimension_1: String(amount) });
         openFakeDoor();
       });
 
@@ -719,17 +677,13 @@
       }
 
       document.getElementById('btn-back').addEventListener('click', function () {
-        track('e001_step1_back', { selected_amount: selectedAmount });
         showScreen('screen-intro');
       });
 
       renderHero();
       renderFakeDoor();
 
-      track('e001_landing_opened', {
-        source_widget: smysl,
-        invalid_assignment: false
-      });
+      track('7843_landing_impression_step1');
     })();
   </script>
 </body>
